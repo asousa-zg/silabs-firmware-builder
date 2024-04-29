@@ -8,7 +8,7 @@ on:
       - .github/workflows/silabs-firmware-build.yaml
       - EmberZNet/**
       - OpenThreadRCP/**
-      - RCPMultiPAN/**
+      #- RCPMultiPAN/**
     branches:
       - main
     tags:
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ncp_matrix: ${{ steps.process.outputs.ncp_matrix }}
-      rcp_matrix: ${{ steps.process.outputs.rcp_matrix }}
+      #rcp_matrix: ${{ steps.process.outputs.rcp_matrix }}
       ot_matrix: ${{ steps.process.outputs.ot_matrix }}
       targets: ${{ steps.process.outputs.targets }}
     steps:
@@ -92,39 +92,39 @@ jobs:
       baudrate: ${{ matrix.baudrate }}
       metadata_extra: "{ \"ezsp_version\": \"${{ needs.build-container.outputs.ezsp_version}}\" }"
 
-  rcp-multi-pan-firmware-build:
-    name: RCP Multi-PAN
-    needs: [build-container, build-matrix]
-    strategy:
-      matrix:
-        target: ${{ fromJson(needs.build-matrix.outputs.targets) }}
-        baudrate: [230400, 460800]
-        include: ${{ fromJson(needs.build-matrix.outputs.rcp_matrix) }}
-        exclude:
-          - target: yellow
-            baudrate: 230400
-          - target: skyconnect
-            baudrate: 230400
-          - target: elelabs-elx0x3
-            baudrate: 230400
-          - target: zb-gw04-1v2
-            baudrate: 460800
-    uses: ./.github/workflows/silabs-firmware-build.yaml
-    with:
-      firmware_name: rcp-uart-802154-v${{ needs.build-container.outputs.sdk_version}}-${{ matrix.target }}-${{ matrix.baudrate }}
-      project_file: "/gecko_sdk/protocol/openthread/sample-apps/ot-ncp/rcp-uart-802154.slcp"
-      project_name: "rcp-uart-802154"
-      device: ${{ matrix.device }}
-      components: ${{ matrix.components }}
-      without_components: ${{ matrix.without_components }}
-      configuration: ${{ matrix.configuration }}
-      patchpath: "RCPMultiPAN/${{ matrix.name }}"
-      sdkpatchpath: "RCPMultiPAN/GeckoSDK"
-      slcp_yaml_changes: ${{ matrix.slcp_yaml_changes }}
-      extra_c_defs: ${{ matrix.extra_c_defs }}
-      sdk_version: ${{ needs.build-container.outputs.sdk_version}}
-      baudrate: ${{ matrix.baudrate }}
-      metadata_fw_type: "rcp-uart-802154"
+  # rcp-multi-pan-firmware-build:
+  #   name: RCP Multi-PAN
+  #   needs: [build-container, build-matrix]
+  #   strategy:
+  #     matrix:
+  #       target: ${{ fromJson(needs.build-matrix.outputs.targets) }}
+  #       baudrate: [230400, 460800]
+  #       include: ${{ fromJson(needs.build-matrix.outputs.rcp_matrix) }}
+  #       exclude:
+  #         - target: yellow
+  #           baudrate: 230400
+  #         - target: skyconnect
+  #           baudrate: 230400
+  #         - target: elelabs-elx0x3
+  #           baudrate: 230400
+  #         - target: zb-gw04-1v2
+  #           baudrate: 460800
+  #   uses: ./.github/workflows/silabs-firmware-build.yaml
+  #   with:
+  #     firmware_name: rcp-uart-802154-v${{ needs.build-container.outputs.sdk_version}}-${{ matrix.target }}-${{ matrix.baudrate }}
+  #     project_file: "/gecko_sdk/protocol/openthread/sample-apps/ot-ncp/rcp-uart-802154.slcp"
+  #     project_name: "rcp-uart-802154"
+  #     device: ${{ matrix.device }}
+  #     components: ${{ matrix.components }}
+  #     without_components: ${{ matrix.without_components }}
+  #     configuration: ${{ matrix.configuration }}
+  #     # patchpath: "RCPMultiPAN/${{ matrix.name }}"
+  #     # sdkpatchpath: "RCPMultiPAN/GeckoSDK"
+  #     slcp_yaml_changes: ${{ matrix.slcp_yaml_changes }}
+  #     extra_c_defs: ${{ matrix.extra_c_defs }}
+  #     sdk_version: ${{ needs.build-container.outputs.sdk_version}}
+  #     baudrate: ${{ matrix.baudrate }}
+  #     metadata_fw_type: "rcp-uart-802154"
 
   ot-rcp-firmware-build:
     name: OpenThread RCP
