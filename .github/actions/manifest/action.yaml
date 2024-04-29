@@ -8,8 +8,8 @@ inputs:
 outputs:
   targets:
     description: list of targets to build
-  rcp_matrix:
-    description: 'matrix config for rcp firmware'
+  # rcp_matrix:
+  #   description: 'matrix config for rcp firmware'
   ncp_matrix:
     description: 'matrix config for ncp firmware'
   ot_matrix:
