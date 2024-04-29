@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  sdk_version: 4.4.1
+  sdk_version: 4.1.6
 
 jobs:
   build-container:
@@ -26,8 +26,8 @@ jobs:
       packages: write
     outputs:
       sdk_version: ${{ env.sdk_version }}
-      ot_version: 2.4.1.0
-      ezsp_version: 7.4.1.0
+      ot_version: 2.1.6.0
+      ezsp_version: 7.1.6.0
     steps:
       - uses: actions/checkout@v3.3.0
       - name: Log in to the GitHub container registry
