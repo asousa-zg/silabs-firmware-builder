@@ -117,8 +117,8 @@ jobs:
   #     components: ${{ matrix.components }}
   #     without_components: ${{ matrix.without_components }}
   #     configuration: ${{ matrix.configuration }}
-  #     patchpath: "RCPMultiPAN/${{ matrix.name }}"
-  #     sdkpatchpath: "RCPMultiPAN/GeckoSDK"
+  #     # patchpath: "RCPMultiPAN/${{ matrix.name }}"
+  #     # sdkpatchpath: "RCPMultiPAN/GeckoSDK"
   #     slcp_yaml_changes: ${{ matrix.slcp_yaml_changes }}
   #     extra_c_defs: ${{ matrix.extra_c_defs }}
   #     sdk_version: ${{ needs.build-container.outputs.sdk_version}}
@@ -176,9 +176,11 @@ jobs:
           for t in $targets; do
                   mkdir -p $t
                   find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*$t*.gbl" -exec sh -c 'cp "$0" "$1/$(basename "$0")"' {} "$t" \;
+                  find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*$t*.hex" -exec sh -c 'cp "$0" "$1/$(basename "$0")"' {} "$t" \;
           done
 
           find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*zbdongle*.gbl" ! -name "*460*" | while read f
+          find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*zbdongle*.hex" ! -name "*460*" | while read f
           do
               mkdir -p zb-gw04-1v1
               new=$(basename $f | sed "s/zbdonglee/zb-gw04-1v1/")
@@ -190,4 +192,6 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update firmware builds
-          file_pattern: firmware_builds/**.gbl
+          file_pattern: |
+            firmware_builds/**.gbl
+            firmware_builds/**.hex
