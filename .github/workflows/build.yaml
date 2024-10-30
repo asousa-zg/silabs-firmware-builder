@@ -55,7 +55,7 @@ jobs:
     outputs:
       ncp_matrix: ${{ steps.process.outputs.ncp_matrix }}
       #rcp_matrix: ${{ steps.process.outputs.rcp_matrix }}
-      ot_matrix: ${{ steps.process.outputs.ot_matrix }}
+      #ot_matrix: ${{ steps.process.outputs.ot_matrix }}
       targets: ${{ steps.process.outputs.targets }}
     steps:
       - uses: actions/checkout@v3
@@ -126,38 +126,38 @@ jobs:
   #     baudrate: ${{ matrix.baudrate }}
   #     metadata_fw_type: "rcp-uart-802154"
 
-  ot-rcp-firmware-build:
-    name: OpenThread RCP
-    needs: [build-container, build-matrix]
-    strategy:
-      matrix:
-        target: ${{ fromJson(needs.build-matrix.outputs.targets) }}
-        baudrate: [230400, 460800]
-        include: ${{ fromJson(needs.build-matrix.outputs.ot_matrix) }}
-        exclude:
-          - target: yellow
-            baudrate: 230400
-          - target: skyconnect
-            baudrate: 230400
-          - target: elelabs-elx0x3
-            baudrate: 230400
-          - target: zb-gw04-1v2
-            baudrate: 460800
-    uses: ./.github/workflows/silabs-firmware-build.yaml
-    with:
-      firmware_name: ot-rcp-v${{ needs.build-container.outputs.ot_version}}-${{ matrix.target }}-${{ matrix.baudrate }}
-      project_file: "/gecko_sdk/protocol/openthread/sample-apps/ot-ncp/ot-rcp.slcp"
-      project_name: "ot-rcp"
-      device: ${{ matrix.device }}
-      components: ${{ matrix.components }}
-      configuration: ${{ matrix.configuration }}
-      patchpath: "OpenThreadRCP/${{ matrix.name }}"
-      sdkpatchpath: "OpenThreadRCP/GeckoSDK"
-      extra_c_defs: ${{ matrix.extra_c_defs }}
-      sdk_version: ${{ needs.build-container.outputs.sdk_version}}
-      metadata_fw_type: "ot-rcp"
-      baudrate: ${{ matrix.baudrate }}
-      metadata_extra: "{ \"ot_rcp_version\": \"SL-OPENTHREAD/2.4.1.0_GitHub-7074a43e4\" }"
+  # ot-rcp-firmware-build:
+  #   name: OpenThread RCP
+  #   needs: [build-container, build-matrix]
+  #   strategy:
+  #     matrix:
+  #       target: ${{ fromJson(needs.build-matrix.outputs.targets) }}
+  #       baudrate: [230400, 460800]
+  #       include: ${{ fromJson(needs.build-matrix.outputs.ot_matrix) }}
+  #       exclude:
+  #         - target: yellow
+  #           baudrate: 230400
+  #         - target: skyconnect
+  #           baudrate: 230400
+  #         - target: elelabs-elx0x3
+  #           baudrate: 230400
+  #         - target: zb-gw04-1v2
+  #           baudrate: 460800
+  #   uses: ./.github/workflows/silabs-firmware-build.yaml
+  #   with:
+  #     firmware_name: ot-rcp-v${{ needs.build-container.outputs.ot_version}}-${{ matrix.target }}-${{ matrix.baudrate }}
+  #     project_file: "/gecko_sdk/protocol/openthread/sample-apps/ot-ncp/ot-rcp.slcp"
+  #     project_name: "ot-rcp"
+  #     device: ${{ matrix.device }}
+  #     components: ${{ matrix.components }}
+  #     configuration: ${{ matrix.configuration }}
+  #     patchpath: "OpenThreadRCP/${{ matrix.name }}"
+  #     sdkpatchpath: "OpenThreadRCP/GeckoSDK"
+  #     extra_c_defs: ${{ matrix.extra_c_defs }}
+  #     sdk_version: ${{ needs.build-container.outputs.sdk_version}}
+  #     metadata_fw_type: "ot-rcp"
+  #     baudrate: ${{ matrix.baudrate }}
+  #     metadata_extra: "{ \"ot_rcp_version\": \"SL-OPENTHREAD/2.4.1.0_GitHub-7074a43e4\" }"
 
   collect_artifacts:
     name: download and publish all artifacts
@@ -177,9 +177,11 @@ jobs:
           for t in $targets; do
                   mkdir -p $t
                   find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*$t*.gbl" -exec sh -c 'cp "$0" "$1/$(basename "$0")"' {} "$t" \;
+                  find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*$t*.hex" -exec sh -c 'cp "$0" "$1/$(basename "$0")"' {} "$t" \;
           done
 
           find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*zbdongle*.gbl" ! -name "*460*" | while read f
+          find *cp-uart-*/ ot-rcp*/ -maxdepth 1 -type f -name "*zbdongle*.hex" ! -name "*460*" | while read f
           do
               mkdir -p zb-gw04-1v1
               new=$(basename $f | sed "s/zbdonglee/zb-gw04-1v1/")
@@ -191,4 +193,6 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update firmware builds
-          file_pattern: firmware_builds/**.gbl
+          file_pattern: |
+            firmware_builds/**.gbl
+            firmware_builds/**.hex

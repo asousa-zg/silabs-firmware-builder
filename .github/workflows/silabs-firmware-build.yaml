@@ -80,7 +80,7 @@ jobs:
 
       - name: Generate Firmware Project
         run: |
-          slc generate --force \
+          slc generate \
               --with="${{ inputs.device }},${{ inputs.components }}" \
               --without="${{ inputs.without_components }}" \
               --project-file="${{ inputs.project_file }}" \
