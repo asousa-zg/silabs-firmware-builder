@@ -143,7 +143,7 @@ jobs:
                     --app build/release/${{ inputs.project_name }}.out \
                     --device ${{ inputs.device }} --metadata version.json
           commander convert build/release/${{ inputs.project_name }}.out \
-                    build/release/${{ inputs.firmware_name }}.hex
+                    -o build/release/${{ inputs.firmware_name }}.hex
 
       - name: Install node within container (act)
         if: ${{ env.ACT }}
