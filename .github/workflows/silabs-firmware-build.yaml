@@ -80,12 +80,12 @@ jobs:
 
       - name: Generate Firmware Project
         run: |
-          slc generate \
+          slc generate --force \
               --with="${{ inputs.device }},${{ inputs.components }}" \
               --without="${{ inputs.without_components }}" \
               --project-file="${{ inputs.project_file }}" \
               --export-destination=${{ inputs.firmware_name }} \
-              --copy-proj-sources --copy-sdk-sources --new-project --force \
+              --copy-proj-sources --copy-sdk-sources --new-project \
               --configuration="${{ inputs.configuration }}"
 
       - name: Set Baudrate
