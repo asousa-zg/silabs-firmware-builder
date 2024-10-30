@@ -142,6 +142,8 @@ jobs:
           commander gbl create build/release/${{ inputs.firmware_name }}.gbl \
                     --app build/release/${{ inputs.project_name }}.out \
                     --device ${{ inputs.device }} --metadata version.json
+          commander convert build/release/${{ inputs.project_name }}.out \
+                    build/release/${{ inputs.firmware_name }}.hex
 
       - name: Install node within container (act)
         if: ${{ env.ACT }}
@@ -154,4 +156,6 @@ jobs:
         if: success() || failure()
         with:
           name: ${{ inputs.firmware_name }}
-          path: ${{ inputs.firmware_name }}/build/release/${{ inputs.firmware_name }}.gbl
+          path: |
+            ${{ inputs.firmware_name }}/build/release/${{ inputs.firmware_name }}.gbl
+            ${{ inputs.firmware_name }}/build/release/${{ inputs.firmware_name }}.hex
