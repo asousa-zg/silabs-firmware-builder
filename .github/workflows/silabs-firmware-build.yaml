@@ -159,3 +159,4 @@ jobs:
           path: |
             ${{ inputs.firmware_name }}/build/release/${{ inputs.firmware_name }}.gbl
             ${{ inputs.firmware_name }}/build/release/${{ inputs.firmware_name }}.hex
+            ${{ inputs.firmware_name }}/build/release/${{ inputs.firmware_name }}.out
